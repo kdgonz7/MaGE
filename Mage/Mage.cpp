@@ -2,24 +2,20 @@
 //
 
 #include <iostream>
-#include <fstream>
 
-#include "MaGEBasic.h"
-#include "MaGEInstructions.h"
+#include "MaGEPrint.h"
 #include "MaGEPage.h"
-#include "MaGESimpleLock.h"
 
 static int stage1()
 {
-    std::cout << "stage1 - creating the initial @world page\n";
+	std::cout << "stage1 - creating the initial @world page\n";
 
 	MaGE::GE_Page page = MaGE::GE_Page("default_@world.mgVK", 1024 ^ 2);
-	page.allocate(); // call allocate if you're making a new page, otherwise you can just load it
 	
 	page.setAuthority(false); // if you use authority, you MUST call endUsage() or it will lock the file and you won't be able to load it
+	page.allocate(); // call allocate if you're making a new page, otherwise you can just load it
 	
 	page.writeInt32(0, 15, MaGE::ENDIAN_LITTLE); // write to the page
-
 	page.dumpToFile("default_@world.mgVK"); // dump the page to a file
 
 	std::cout << "---------" << std::endl;
@@ -49,6 +45,9 @@ static int stage2()
 
 static int stage3()
 {
+	// MaGE, aside from classes, uses little
+	// to no heap memory, it uses a simple file 
+	// format that is essentially raw memory.
 	std::cout << "stage3 - reading from the @world page and returning a memory pointer of 3 bytes\n";
 
 	using MaGE::GE_Page;
@@ -60,16 +59,31 @@ static int stage3()
 	// get a pointer to a free memory address (an address with 0x00)
 	auto m = pagefile.ask(4);
 
+	if (m == nullptr or ! m->isGood()) {
+		std::cout << "stage3: failed to allocate memory" << std::endl;
+	}
+
 	char * p = m->getMemory();
 	p[0] = 'a';
 	p[1] = 'b';
 	p[2] = 'c';
 	p[3] = 0;
 
+
+	// keep in mind, when this object is destroyed, the memory will be gone FOREVER,
+	// to store memory, you need to write it to the file you're reading from., or allocate, and dump it to a file.
 	std::cout << "allocated a free block of memory at: " << m->getOffset() << std::endl;
 	std::cout << reinterpret_cast<char*>(m->getMemory()) << std::endl;
 
 	std::cout << "---------" << std::endl;
+
+	delete m; // you have to free memory objects alloctaed with ask()
+
+	// note that you usually don't want to write 
+	// temporary data to the @world page, since that 
+	// gets saved to the file, and the data will remain there forever.
+
+	pagefile.dumpToFile("default_@world_dirty.mgVK");
 
 	return 0;
 }
@@ -103,9 +117,14 @@ int stage4(void)
 
 int main(void)
 {
+	string ms1 = MaGE::colorize("test", MaGE::Color::RED);
+	MaGE::print(ms1, std::cout);
+
 	stage1();
 	stage2();
 	stage3();
 	stage4();
+
+	exit(0);
 }
 
