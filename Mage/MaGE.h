@@ -10,4 +10,8 @@ constexpr auto MAGE_HEADER_PART_1_LOCKED = 0xFE; // if the file is authority-loc
 constexpr auto MAGE_HEADER_PART_2 = 0xAF;
 constexpr auto MAGE_HEADER_PART_3 = 0xBF;
 constexpr auto MAGE_HEADER_VERSION = 0001;
+constexpr auto MAGE_DEFAULT_UNINITIALIZED = -1;
+
+constexpr auto EMEMORYOVERFLOW = 2;
+
 
