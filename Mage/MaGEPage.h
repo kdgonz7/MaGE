@@ -22,6 +22,16 @@ namespace MaGE {
 		GE_Page(const char* name, const size_t max_size = 0) : 
 			page_name(name), max_size(max_size) {}
 
+		// i guess destructors are called at the end of a scope
+		// like when it's done
+		// that's pretty freakin cool!!!
+		~GE_Page() {
+			// clean up
+			if (this->data != nullptr) {
+				delete[] this->data;
+			}
+		}
+
 		const char* nameOf() { return page_name;  }
 		const size_t sizeOf() { return max_size;  }
 		const char* getFilename() { return filename; }
