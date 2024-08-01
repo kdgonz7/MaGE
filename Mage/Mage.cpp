@@ -10,7 +10,7 @@ static int stage1()
 {
 	std::cout << "stage1 - creating the initial @world page\n";
 
-	MaGE::GE_Page page = MaGE::GE_Page("default_@world.mgVK", 1024 ^ 2);
+	MaGE::GE_Page page = MaGE::GE_Page("default_@world.mgVK", 1024);
 	
 	page.setAuthority(false); // if you use authority, you MUST call endUsage() or it will lock the file and you won't be able to load it
 	page.allocate(); // call allocate if you're making a new page, otherwise you can just load it
@@ -69,7 +69,6 @@ static int stage3()
 	p[2] = 'c';
 	p[3] = 0;
 
-
 	// keep in mind, when this object is destroyed, the memory will be gone FOREVER,
 	// to store memory, you need to write it to the file you're reading from., or allocate, and dump it to a file.
 	std::cout << "allocated a free block of memory at: " << m->getOffset() << std::endl;
@@ -120,10 +119,7 @@ int main(void)
 	string ms1 = MaGE::colorize("test", MaGE::Color::RED);
 	MaGE::print(ms1, std::cout);
 
-	stage1();
-	stage2();
 	stage3();
-	stage4();
 
 	exit(0);
 }
