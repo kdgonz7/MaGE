@@ -1,6 +1,9 @@
 #include <fstream>
-#include <iostream>
 #include <cstdio>
+
+#if !defined(_WIN32) // windows for some reason doesn't require an include
+#include <sys/stat.h>
+#endif
 
 #include "MaGESimpleLock.h"
 
