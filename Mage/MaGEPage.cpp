@@ -1,7 +1,8 @@
 #include <iostream>
+#include <cstring>
 #include <fstream>
+#include <algorithm>
 
-#include "MaGEBasic.h"
 #include "MaGEPage.h"
 #include "MaGEEndian.h"
 #include "MaGEMemObj.h"
@@ -24,10 +25,10 @@ void* MaGE::GE_Page::allocate()
 		return nullptr;
 	}
 
-	this->data = new char[max_size];
+	this->data = new char[this->max_size];
 
 	for (size_t i = 0 ; i < this->max_size ; i++) {
-		this->data[i] = -1; // uninitialized
+		this->data[i] = MAGE_DEFAULT_UNINITIALIZED; // uninitialized
 	}
 	
 	// note: this is the header for a MaGE file
@@ -267,6 +268,13 @@ MaGE::GE_MemoryObject* MaGE::GE_Page::ask(size_t size)
 		return nullptr;
 	}
 
+	if (size >= this->max_size) {
+		obj->fail();
+		obj->setCode(EMEMORYOVERFLOW);
+
+		return obj;
+	}
+
 	// we start at 0.
 	size_t offset = static_cast<size_t>(0) + MAGE_HEADERSIZE;
 
@@ -274,6 +282,11 @@ MaGE::GE_MemoryObject* MaGE::GE_Page::ask(size_t size)
 	for (size_t i = offset ; i < this->max_size ; i++) {
 		if (this->data[i] == -1) {
 			offset = i;
+
+			for (size_t j = i ; j < i + size ; j++) {
+				this->data[j] = 0;
+			} // set the memory to uninitialized
+
 			break;
 		}
 	}
