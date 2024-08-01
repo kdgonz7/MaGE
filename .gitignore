@@ -20,6 +20,9 @@ nmage
 # CMake
 build
 
+# mASSIF
+massif.*
+
 # Mono auto generated files
 mono_crash.*
 
