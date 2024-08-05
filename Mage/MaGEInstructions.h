@@ -22,11 +22,11 @@
 // default_@protected.mgVK is an example of a protected page. When accessed, this page will be locked to the current instance.
 
 namespace MaGE {
-	enum MaGEInstruction {
+	enum MaGEInstructionSet {
 		HALT = 0x00,		// Halt the program
 		EARLY = 0x01,		// Early halt the program
-		STORE = 0x02,		// Store a value			[ADDRESS] [SIZE] [VALUE]
-		LOAD = 0x03,		// Load a value w/ size		[ADDRESS] [SIZE] [ALIGN]
+		STORE = 0x02,		// Store a value					[@region] [ADDRESS] [SIZE] [VALUE]
+		LOAD = 0x03,		// Load a value w/ size		[@region] [ADDRESS] [SIZE] [ALIGN]
 	};
 }
 

@@ -1,10 +1,10 @@
-// Mage.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 
 #include "MaGEPrint.h"
 #include "MaGEPage.h"
+#include "MaGEBasic.h"
+#include "MaGEOpCode.h"
+#include "MaGEC.h"
 
 static int stage1()
 {
@@ -114,12 +114,30 @@ int stage4(void)
 	return 0;
 }
 
+int stage5(void)
+{
+	using MaGE::MaGEIR; // instruction register
+
+	MaGEIR ir = MaGEIR();
+	ir.pushInstruction(MaGE::MaGEInstruction(0x05, { 59, 1 }));
+
+	MaGE::MaGEInstruction *current = ir.unpack();
+
+	if (! MaGE::isValidOpcode(current->getInstruction())) {
+		std::cout << "stage5: invalid opcode" << std::endl;
+	}
+
+	MaGE::dumpIS(ir, "a.mof", MaGE::BIT32);
+
+	return (0);
+}
+
 int main(void)
 {
 	string ms1 = MaGE::colorize("test", MaGE::Color::RED);
 	MaGE::print(ms1, std::cout);
 
-	stage3();
+	stage5();
 
 	exit(0);
 }

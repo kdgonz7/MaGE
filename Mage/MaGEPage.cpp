@@ -26,23 +26,20 @@ void* MaGE::GE_Page::allocate()
 	}
 
 	this->data = new char[this->max_size];
-
-	for (size_t i = 0 ; i < this->max_size ; i++) {
-		this->data[i] = MAGE_DEFAULT_UNINITIALIZED; // uninitialized
-	}
+	std::fill(this->data, this->data + this->max_size, MAGE_DEFAULT_UNINITIALIZED);
 	
 	// note: this is the header for a MaGE file
 	// we are writing the header, therefore we don't want to offset by MAGE_HEADERSIZE
 	if (this->should_have_authority) {
-		this->writeInt32(0, MAGE_HEADER_PART_1_LOCKED, MaGE::ENDIAN_LITTLE, false);
+		writeInt32(0, MAGE_HEADER_PART_1_LOCKED, MaGE::ENDIAN_LITTLE, false);
 	}
 	else {
-		this->writeInt32(0, MAGE_HEADER_PART_1, MaGE::ENDIAN_LITTLE, false);
+		writeInt32(0, MAGE_HEADER_PART_1, MaGE::ENDIAN_LITTLE, false);
 	}
 
-	this->writeInt32(4, MAGE_HEADER_PART_2, MaGE::ENDIAN_LITTLE, false);
-	this->writeInt32(8, MAGE_HEADER_PART_3, MaGE::ENDIAN_LITTLE, false);
-	this->writeInt32(12, MAGE_HEADER_VERSION, MaGE::ENDIAN_LITTLE, false);
+	writeInt32(4, MAGE_HEADER_PART_2, MaGE::ENDIAN_LITTLE, false);
+	writeInt32(8, MAGE_HEADER_PART_3, MaGE::ENDIAN_LITTLE, false);
+	writeInt32(12, MAGE_HEADER_VERSION, MaGE::ENDIAN_LITTLE, false);
 
 	/* integrity check :) */
 	int32_t c1 = this->readInt32(0, MaGE::ENDIAN_LITTLE, false);
